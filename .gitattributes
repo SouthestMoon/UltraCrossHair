@@ -1,3 +1,6 @@
+*.xaml linguist-language=XAML linguist-detectable=true
+*.cs linguist-language=C# linguist-detectable=true
+*.h linguist-language=C
 ###############################################################################
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
@@ -61,5 +64,4 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
-*.xaml linguist-language=XAML linguist-detectable=true
-*.cs linguist-language=C# linguist-detectable=true
+
