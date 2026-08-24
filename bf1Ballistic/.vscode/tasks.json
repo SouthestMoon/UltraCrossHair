@@ -1,0 +1,61 @@
+{
+    "version": "2.0.0",
+    "command": "clang",
+    
+    "tasks": [
+        {
+            "label": "clang",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: clang.exe 生成活动文件",
+            "command": "D:/LLVM/bin/clang.exe",
+            "args": [
+        "${file}",//代码源文件
+        "log.c",//日志源文件
+        "-o",//指定生成文件名
+        "${fileBasenameNoExtension}.exe",//生成文件名
+        "-Wall",// -w忽略警告，-Wall显示警告
+        "-g",//生成调试信息供lldb使用
+        "-static-libgcc",//链接gcc库
+        "-fcolor-diagnostics",//显示彩色警告信息
+        "--target=x86_64-w64-mingw",//说明目标运行环境，win32
+        "-I${workspaceFolder}",//指定头文件寻找路径
+        "-std=gnu23",//c23标准
+        //"-shared"//编译出dll而非exe
+    ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "调试器生成的任务。"
+        }
+    ],
+    "problemMatcher": {
+        "owner": "c",
+        "fileLocation": [
+            "relative",
+            "${workspaceRoot}"
+        ],
+        "pattern": {
+            "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+        }
+    }
+}

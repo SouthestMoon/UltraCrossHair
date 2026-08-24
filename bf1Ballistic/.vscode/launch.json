@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        
+        {
+            "name": "(Windows) 启动",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/${fileBasenameNoExtension}.exe",
+            "args": [],
+            "console": "externalTerminal",
+            "cwd": "${fileDirname}",
+            
+        }
+        
+    ],
+    "version": "2.0.0"
+    
+
+}

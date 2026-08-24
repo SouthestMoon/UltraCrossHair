@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "d:/LLVM/lib/clang/18/include/**",
+                "d:/gcc/bin/../lib/gcc/mingw32/6.3.0/include",
+                "d:/gcc/bin/../lib/gcc/mingw32/6.3.0/../../../../include",
+                "d:/gcc/bin/../lib/gcc/mingw32/6.3.0/include-fixed",
+                "d:/gcc/bin/../lib/gcc/mingw32/6.3.0/../../../../mingw32/include",
+                "C:/Users/SouthestMoon/Downloads/SDL2-devel-2.30.8-mingw/SDL2-2.30.8/x86_64-w64-mingw32/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "D:/LLVM/bin/clang.exe",
+            "cStandard": "c23",
+            "intelliSenseMode": "windows-clang-x64"
+        }
+    ],
+    "version": 4
+}
