@@ -1,4 +1,4 @@
-*.xaml linguist-language=xaml
+*.xaml linguist-language=XML
 *.cs linguist-language=C# linguist-detectable=true
 *.h linguist-language=C
 ###############################################################################
