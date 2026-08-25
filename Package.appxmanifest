@@ -60,8 +60,6 @@
 									<Width>400</Width>
 									<MinHeight>150</MinHeight>
 									<MinWidth>200</MinWidth>
-									<MaxHeight>1080</MaxHeight>
-									<MaxWidth>1920</MaxWidth>
 								</Size>
 								<ResizeSupported>
 									<Horizontal>true</Horizontal>

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("App1")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("UltraCrossHair")]
+[assembly: AssemblyDescription("一个基于XBOX game bar widgets的屏幕准心软件，目前对战地一狙击枪提供了自带的标尺。\r\n\r\nA screen crosshair overlay for Xbox Game Bar Widgets with Battlefield 1 reticle support currently.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("App1")]
+[assembly: AssemblyProduct("UltraCrossHair")]
 [assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
