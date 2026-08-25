@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Gaming.XboxGameBar;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -25,11 +27,13 @@ namespace WidgetSampleCS
     /// </summary>
     public sealed partial class Widget1 : Page
     {
+        
         public Widget1()
         {
             this.InitializeComponent();
+            
         }
-        private async void SelectPNG_Click(object sender, RoutedEventArgs e)
+        private async void SelectPNG_Click(Object sender, RoutedEventArgs e)
         {
             FileOpenPicker picker = new FileOpenPicker();
             picker.FileTypeFilter.Add(".png");
@@ -46,6 +50,44 @@ namespace WidgetSampleCS
                 alertToSelect.Visibility = Visibility.Collapsed;
 
             }
+        }
+
+        public async void hideAllWhenBackground()
+        {
+            try
+            {
+                await Log("activate");
+                await Dispatcher.RunAsync(
+                    Windows.UI.Core.CoreDispatcherPriority.Normal, 
+                    () => 
+                    {
+                        alertToSelect.Visibility = Visibility.Collapsed;
+                    });
+                
+            }
+            catch (Exception ex) 
+            {
+                await Log(ex.ToString());
+            }
+        }
+        private async Task Log(string message)
+        {
+                StorageFolder folder =
+                    ApplicationData.Current.LocalFolder;
+
+                StorageFile file =
+                    await folder.CreateFileAsync(
+                        "log.txt",
+                        CreationCollisionOption.OpenIfExists);
+
+                await FileIO.AppendTextAsync(
+                    file,
+                    DateTime.Now.ToString("HH:mm:ss.fff")
+                    + " "
+                    + message
+                    + "\r\n");
+            
+            
         }
     }
 }

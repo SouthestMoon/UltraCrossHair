@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using WidgetSampleCS;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,7 +19,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using WidgetSampleCS;
 
 namespace App1
 {
@@ -25,7 +27,8 @@ namespace App1
     /// </summary>
     sealed partial class App : Application
     {
-        private XboxGameBarWidget widget1 = null;
+        public Widget1 widget = null;
+        public XboxGameBarWidget widgetObject = null;
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
         /// 已执行，逻辑上等同于 main() 或 WinMain()。
@@ -80,7 +83,7 @@ namespace App1
                     Window.Current.Content = rootFrame;
 
                     // Create Game Bar widget object which bootstraps the connection with Game Bar
-                    widget1 = new XboxGameBarWidget(
+                    widgetObject = new XboxGameBarWidget(
                         widgetArgs,
                         Window.Current.CoreWindow,
                         rootFrame);
@@ -89,6 +92,10 @@ namespace App1
                     Window.Current.Closed += Widget1Window_Closed;
 
                     Window.Current.Activate();
+                    ///监听事件以在小组件转向后台时隐藏所有无关组件
+                    widget = rootFrame.Content as Widget1;
+                    widgetObject.GameBarDisplayModeChanged += isOnBackgroundOrNOT;
+                   
                 }
                 else
                 {
@@ -99,7 +106,7 @@ namespace App1
 
         private void Widget1Window_Closed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
         {
-            widget1 = null;
+            widgetObject = null;
             Window.Current.Closed -= Widget1Window_Closed;
         }
         /// <summary>
@@ -169,5 +176,40 @@ namespace App1
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
         }
+
+        
+        public void isOnBackgroundOrNOT(XboxGameBarWidget sender, object args)
+        {
+
+            if (sender.GameBarDisplayMode != XboxGameBarDisplayMode.Foreground
+                &&
+                sender.Pinned == true
+                &&
+                sender.ClickThroughEnabled == true)
+            {
+                
+                widget.hideAllWhenBackground();
+            }
+        }
+        private async Task Log(string message)
+        {
+                StorageFolder folder =
+                    ApplicationData.Current.LocalFolder;
+
+                StorageFile file =
+                    await folder.CreateFileAsync(
+                        "log.txt",
+                        CreationCollisionOption.OpenIfExists);
+
+                await FileIO.AppendTextAsync(
+                    file,
+                    DateTime.Now.ToString("HH:mm:ss.fff")
+                    + " "
+                    + message
+                    + "\r\n");
+            
+           
+        }
+
     }
 }
