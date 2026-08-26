@@ -95,7 +95,7 @@ namespace App1
                     ///监听事件以在小组件转向后台时隐藏所有无关组件
                     widget = rootFrame.Content as Widget1;
                     widgetObject.GameBarDisplayModeChanged += isOnBackgroundOrNOT;
-                   
+                    
                 }
                 else
                 {
@@ -190,6 +190,10 @@ namespace App1
                 
                 widget.hideAllWhenBackground();
             }
+        }
+        public async Task setAsCenter()
+        {
+           await widgetObject.CenterWindowAsync();
         }
         private async Task Log(string message)
         {

@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using App1;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -48,7 +49,7 @@ namespace WidgetSampleCS
                 }
                 CrosshairIMGplace.Source = bitmapImage;
                 alertToSelect.Visibility = Visibility.Collapsed;
-
+                
             }
         }
 
@@ -56,12 +57,12 @@ namespace WidgetSampleCS
         {
             try
             {
-                await Log("activate");
+            
                 await Dispatcher.RunAsync(
                     Windows.UI.Core.CoreDispatcherPriority.Normal, 
                     () => 
                     {
-                        alertToSelect.Visibility = Visibility.Collapsed;
+                        
                     });
                 
             }
@@ -88,6 +89,24 @@ namespace WidgetSampleCS
                     + "\r\n");
             
             
+        }
+
+        private async void centerScreenButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var currentApp = Application.Current as App;
+                await Dispatcher.RunAsync(
+                       Windows.UI.Core.CoreDispatcherPriority.Normal,
+                       async () =>
+                       {
+                           await currentApp.setAsCenter();
+                       });
+            }
+            catch (Exception ex)
+            {
+                await Log(ex.ToString());
+            }
         }
     }
 }

@@ -9,40 +9,36 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="750*"/>
-            <RowDefinition Height="250*"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="750*"/>
-            <ColumnDefinition Width="250*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,10,0,0">
-            <Button x:Name="SelectPNG" HorizontalAlignment="Stretch" Height="45" Content="选择本地PNG准心" ToolTipService.ToolTip="选择本地自定义的PNG准心文件，不要使用分辨率大于4k的准心文件，本程序不会缩放你的准心，以此保留原始信息" FontSize="22" Click="SelectPNG_Click">
-
-            </Button>
-            <TextBlock Text="选择游戏" FontSize="22" HorizontalAlignment="Stretch" Margin="0,20,0,0"></TextBlock>
-            <ComboBox Margin="0" HorizontalAlignment="Stretch" Height="45" IsEditable="False">
-                <ComboBoxItem IsSelected="True">战地一</ComboBoxItem>
-            </ComboBox>
-            <TextBlock Text="选择枪械(弹速高→低)" FontSize="22" HorizontalAlignment="Stretch" Margin="0,20,0,0"></TextBlock>
-            <ComboBox Margin="0" HorizontalAlignment="Stretch" Height="45" IsEditable="False">
-                <ComboBoxItem IsSelected="True">Gewehr 98</ComboBoxItem>
-                <ComboBoxItem>Enfield 1917/M1903</ComboBoxItem>
-                <ComboBoxItem>莫辛纳甘/Russian 1895</ComboBoxItem>
-                <ComboBoxItem>三八</ComboBoxItem>
-                <ComboBoxItem>罗斯 MKⅢ/SMLE MKⅢ</ComboBoxItem>
-                <ComboBoxItem>勒贝尔1886</ComboBoxItem>
-                <ComboBoxItem>卡尔卡诺M91</ComboBoxItem>
-                <ComboBoxItem>Gewehr M95</ComboBoxItem>
-                <ComboBoxItem>Russian 1895 壕沟战</ComboBoxItem>
-                <ComboBoxItem>马提尼-亨利</ComboBoxItem>
-                <ComboBoxItem>Vetterli-Vitali M1870</ComboBoxItem>
-            </ComboBox>
+        <StackPanel Orientation="Horizontal">
+        <MenuBar VerticalAlignment="Top">
+            <MenuBarItem Title="打开" ToolTipService.ToolTip="选择本地自定义的PNG准心文件，不要使用分辨率过大（基于您的屏幕）的准心文件，本程序不会缩放你的准心，以此保留原始信息">
+                <MenuFlyoutItem Text="打开本地PNG准心" Click="SelectPNG_Click" ToolTipService.ToolTip="不要使用分辨率过大（基于您的屏幕）的准心文件"></MenuFlyoutItem>
+            </MenuBarItem>
+            <MenuBarItem Title="选择预设" ToolTipService.ToolTip="选择软件自带的，带标尺准心">
+                <MenuFlyoutSubItem Text="战地一">
+                    <MenuFlyoutItem Text="Gewehr 98"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Enfield 1917/M1903"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Mosin-Nagant/Russian 1895"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Type 38"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Ross MKⅢ/SMLE MKⅢ"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Lebel M1886勒贝尔"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Carcano M91卡尔卡诺"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Gewehr M95"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Russian 1895 Trench壕沟"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Martini-Henry马提尼"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Vetterli-Vitali M1870维塔利"></MenuFlyoutItem>
+                </MenuFlyoutSubItem>
+            </MenuBarItem>
+        </MenuBar>
+            <Button x:Name="centerScreenButton" Content="准心回中" Background="Transparent" Click="centerScreenButton_Click"></Button>
         </StackPanel>
-        <StackPanel Grid.Column="0" Grid.Row="0" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Grid.Column="0" Grid.Row="1" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock HorizontalAlignment="Center" FontSize="25" x:Name="alertToSelect">请选择自定义的PNG准心文件或选择准心预设</TextBlock>
         </StackPanel>
-        <Image Grid.Column="0" Grid.Row="0" x:Name="CrosshairIMGplace" Stretch="None">
+        <Image Grid.Column="0" Grid.Row="1" x:Name="CrosshairIMGplace" Stretch="None" VerticalAlignment="Center" HorizontalAlignment="Center">
 
         </Image>
     </Grid>
