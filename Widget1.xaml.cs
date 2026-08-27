@@ -18,6 +18,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using App1;
+using Windows.UI.ViewManagement;
+using Windows.UI;
+using System.Drawing;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -41,35 +44,60 @@ namespace WidgetSampleCS
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                BitmapImage bitmapImage = new BitmapImage();
-                using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
-                {
-
-                    await bitmapImage.SetSourceAsync(stream);
-                }
-                CrosshairIMGplace.Source = bitmapImage;
-                alertToSelect.Visibility = Visibility.Collapsed;
-                
+                setCrosshairImg(file);
+                ///缓存图片
+                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                StorageFile imgCache = await localFolder.CreateFileAsync("imgCache.png", CreationCollisionOption.ReplaceExisting);
+                await file.CopyAndReplaceAsync(imgCache);
             }
         }
 
-        public async void hideAllWhenBackground()
+        public async void hideOrShow(bool whetherToShow)
         {
-            try
+            if (!whetherToShow)
             {
+                try
+                {
+
+                    await Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal,
+                        () =>
+                        {
+                            menubar.Visibility = Visibility.Collapsed;
+                            centerScreenButton.Visibility = Visibility.Collapsed;
+                            foundationGrid.Background = null;
+                            tipBar.Visibility = Visibility.Collapsed;
+
+                        });
+
+                }
+                catch (Exception ex)
+                {
+                    await Log(ex.ToString());
+                }
+            }
+            else
+            {
+                try
+                {
+
+                    await Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal,
+                        () =>
+                        {
+                            menubar.Visibility = Visibility.Visible;
+                            centerScreenButton.Visibility = Visibility.Visible;
+                            foundationGrid.Background = new SolidColorBrush(Windows.UI.Colors.White);
+                            tipBar.Visibility = Visibility.Visible;
+                        });
+
+                }
+                catch (Exception ex)
+                {
+                    await Log(ex.ToString());
+                }
+            }
             
-                await Dispatcher.RunAsync(
-                    Windows.UI.Core.CoreDispatcherPriority.Normal, 
-                    () => 
-                    {
-                        
-                    });
-                
-            }
-            catch (Exception ex) 
-            {
-                await Log(ex.ToString());
-            }
         }
         private async Task Log(string message)
         {
@@ -107,6 +135,28 @@ namespace WidgetSampleCS
             {
                 await Log(ex.ToString());
             }
+        }
+
+        public async void setCrosshairImg(StorageFile crosshairFile)
+        {
+            if (crosshairFile == null) return;
+            await Dispatcher.RunAsync(
+                        Windows.UI.Core.CoreDispatcherPriority.Normal,
+                        async () =>
+                        {
+                            BitmapImage bitmapImage = new BitmapImage();
+                            using (var stream = await crosshairFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
+                            {
+
+                                await bitmapImage.SetSourceAsync(stream);
+                            }
+                            CrosshairIMGplace.Source = bitmapImage;
+                            var imgSize = new Windows.Foundation.Size(bitmapImage.PixelWidth, bitmapImage.PixelHeight);
+                            alertToSelect.Visibility = Visibility.Collapsed;
+                            var appObject = Application.Current as App;
+                            appObject.resizeWidget(imgSize);
+                        });
+            
         }
     }
 }

@@ -7,39 +7,46 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="foundationGrid" Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-        <MenuBar VerticalAlignment="Top">
-            <MenuBarItem Title="打开" ToolTipService.ToolTip="选择本地自定义的PNG准心文件，不要使用分辨率过大（基于您的屏幕）的准心文件，本程序不会缩放你的准心，以此保留原始信息">
-                <MenuFlyoutItem Text="打开本地PNG准心" Click="SelectPNG_Click" ToolTipService.ToolTip="不要使用分辨率过大（基于您的屏幕）的准心文件"></MenuFlyoutItem>
-            </MenuBarItem>
-            <MenuBarItem Title="选择预设" ToolTipService.ToolTip="选择软件自带的，带标尺准心">
-                <MenuFlyoutSubItem Text="战地一">
-                    <MenuFlyoutItem Text="Gewehr 98"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Enfield 1917/M1903"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Mosin-Nagant/Russian 1895"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Type 38"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Ross MKⅢ/SMLE MKⅢ"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Lebel M1886勒贝尔"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Carcano M91卡尔卡诺"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Gewehr M95"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Russian 1895 Trench壕沟"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Martini-Henry马提尼"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Vetterli-Vitali M1870维塔利"></MenuFlyoutItem>
-                </MenuFlyoutSubItem>
-            </MenuBarItem>
-        </MenuBar>
-            <Button x:Name="centerScreenButton" Content="准心回中" Background="Transparent" Click="centerScreenButton_Click"></Button>
+        <StackPanel  Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock HorizontalAlignment="Center" FontSize="25" x:Name="alertToSelect" HorizontalTextAlignment="Center">请选择自定义的PNG准心文件或选择准心预设<LineBreak/>Choose your own local crosshair <LineBreak/>Or choose from the preset above</TextBlock>
         </StackPanel>
-        <StackPanel Grid.Column="0" Grid.Row="1" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock HorizontalAlignment="Center" FontSize="25" x:Name="alertToSelect">请选择自定义的PNG准心文件或选择准心预设</TextBlock>
-        </StackPanel>
-        <Image Grid.Column="0" Grid.Row="1" x:Name="CrosshairIMGplace" Stretch="None" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Image x:Name="CrosshairIMGplace" Stretch="None" VerticalAlignment="Center" HorizontalAlignment="Center">
 
         </Image>
+        <StackPanel Orientation="Horizontal" Height="40" VerticalAlignment="Top">
+            <MenuBar VerticalAlignment="Top" x:Name="menubar">
+                <MenuBarItem Title="打开" ToolTipService.ToolTip="选择本地自定义的PNG准心文件，不要使用分辨率过大（基于您的屏幕）的准心文件，本程序不会缩放你的准心，以此保留原始信息" Background="WhiteSmoke" FontSize="14">
+                    <MenuFlyoutItem Text="打开本地PNG准心" Click="SelectPNG_Click" ToolTipService.ToolTip="不要使用分辨率过大（基于您的屏幕）的准心文件"></MenuFlyoutItem>
+                </MenuBarItem>
+                <MenuBarItem Title="选择预设" ToolTipService.ToolTip="选择软件自带的，带标尺准心" Background="WhiteSmoke" FontSize="14">
+                    <MenuFlyoutSubItem Text="Battlefield 1">
+                        <MenuFlyoutItem Text="Gewehr 98"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Enfield 1917/M1903"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Mosin-Nagant/Russian 1895"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Type 38"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Ross MKⅢ/SMLE MKⅢ"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Lebel M1886勒贝尔"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Carcano M91卡尔卡诺"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Gewehr M95"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Russian 1895 Trench壕沟"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Martini-Henry马提尼"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Vetterli-Vitali M1870维塔利"></MenuFlyoutItem>
+                    </MenuFlyoutSubItem>
+                </MenuBarItem>
+            </MenuBar>
+            <Button x:Name="centerScreenButton" Content="准心回中" Click="centerScreenButton_Click" Background="WhiteSmoke" Height="40"></Button>
+            <StackPanel Orientation="Horizontal" x:Name="tipBar">
+                <TextBlock x:Name="tips" Text="如何使用How to use:" TextWrapping="Wrap" FontSize="18" VerticalAlignment="Center" TextAlignment="Center" HorizontalTextAlignment="Left" Height="40" LineHeight="40" LineStackingStrategy="BaselineToBaseline" Margin="0,4,0,0"></TextBlock>
+                <StackPanel x:Name="steps" Orientation="Horizontal">
+                    <TextBlock x:Name="step" Text=" 1.禁用顶部的的单击浏览Disable this on top" TextWrapping="Wrap" FontSize="18" VerticalAlignment="Center" TextAlignment="Center" HorizontalTextAlignment="Left" Height="40" LineHeight="40" LineStackingStrategy="BaselineToBaseline" Margin="0,4,0,0"></TextBlock>
+                    <Image x:Name="stepImg" Source="/Assets/disableClickFinal.png" Stretch="None"></Image>
+                </StackPanel>
+            </StackPanel>
+            
+        </StackPanel>
     </Grid>
 </Page>

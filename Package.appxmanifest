@@ -5,12 +5,13 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-  IgnorableNamespaces="uap uap3 mp">
+  xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
+  IgnorableNamespaces="uap uap3 mp uap18">
 
   <Identity
     Name="92296772-7632-48c9-b4b2-f263afa1e76e"
     Publisher="CN=SouthestMoon"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="92296772-7632-48c9-b4b2-f263afa1e76e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -36,7 +37,7 @@
         DisplayName="UltraCrossHair"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="UltraCrossHair"
+        Description="A screen crosshair overlay for Xbox Game Bar Widgets with Battlefield 1 reticle support currently."
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
@@ -116,7 +117,4 @@
 			</ProxyStub>
 		</Extension>
 	</Extensions>
-  <Capabilities>
-    <Capability Name="internetClient" />
-  </Capabilities>
 </Package>

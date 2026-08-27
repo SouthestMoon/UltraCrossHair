@@ -39,7 +39,7 @@ namespace App1
             this.Suspending += OnSuspending;
             
         }
-        protected override void OnActivated(IActivatedEventArgs args)
+        protected override async void OnActivated(IActivatedEventArgs args)
         {
             XboxGameBarWidgetActivatedEventArgs widgetArgs = null;
             if (args.Kind == ActivationKind.Protocol)
@@ -95,7 +95,18 @@ namespace App1
                     ///监听事件以在小组件转向后台时隐藏所有无关组件
                     widget = rootFrame.Content as Widget1;
                     widgetObject.GameBarDisplayModeChanged += isOnBackgroundOrNOT;
-                    
+                    await setAsCenter();
+                    try
+                    {
+                        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                        widget.setCrosshairImg(await localFolder.GetFileAsync("imgCache.png"));
+
+
+                    }
+                    catch (Exception e)
+                    {
+                        await Log(e.ToString());
+                    }
                 }
                 else
                 {
@@ -188,12 +199,17 @@ namespace App1
                 sender.ClickThroughEnabled == true)
             {
                 
-                widget.hideAllWhenBackground();
+                widget.hideOrShow(false);
             }
+            else widget.hideOrShow(true);
         }
         public async Task setAsCenter()
         {
            await widgetObject.CenterWindowAsync();
+        }
+        public async void resizeWidget(Windows.Foundation.Size size)
+        {
+            await widgetObject.TryResizeWindowAsync(size);
         }
         private async Task Log(string message)
         {
