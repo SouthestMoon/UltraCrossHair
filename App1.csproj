@@ -145,6 +145,7 @@
     <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\disableClickFinal.png" />
     <Content Include="Assets\Pin.png" />
+    <Content Include="Assets\settings.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

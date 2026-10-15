@@ -67,6 +67,8 @@ namespace WidgetSampleCS
                             centerScreenButton.Visibility = Visibility.Collapsed;
                             foundationGrid.Background = null;
                             tipBar.Visibility = Visibility.Collapsed;
+                            settingsButton.Visibility = Visibility.Collapsed;
+                            settingsPanel.Visibility = Visibility.Collapsed;
 
                         });
 
@@ -89,6 +91,7 @@ namespace WidgetSampleCS
                             centerScreenButton.Visibility = Visibility.Visible;
                             foundationGrid.Background = new SolidColorBrush(Windows.UI.Colors.White);
                             tipBar.Visibility = Visibility.Visible;
+                            settingsButton.Visibility = Visibility.Visible;
                         });
 
                 }
@@ -135,6 +138,33 @@ namespace WidgetSampleCS
             {
                 await Log(ex.ToString());
             }
+        }
+
+        // Settings remain available when returning to the main view.
+        public int UserFov => (int)Math.Round(fovSlider.Value);
+        public Windows.Foundation.Size UserScreenResolution
+        {
+            get
+            {
+                switch (resolutionSelector.SelectedIndex)
+                {
+                    case 0: return new Windows.Foundation.Size(3840, 2160);
+                    case 1: return new Windows.Foundation.Size(2560, 1440);
+                    default: return new Windows.Foundation.Size(1920, 1080);
+                }
+            }
+        }
+        public int UserMagnification => int.Parse(((ComboBoxItem)magnificationSelector.SelectedItem).Content.ToString());
+        public int UserZeroingDistance => int.Parse(((ComboBoxItem)zeroingSelector.SelectedItem).Content.ToString());
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            settingsPanel.Visibility = Visibility.Visible;
+        }
+
+        private void SettingsBack_Click(object sender, RoutedEventArgs e)
+        {
+            settingsPanel.Visibility = Visibility.Collapsed;
         }
 
         public async void setCrosshairImg(StorageFile crosshairFile)

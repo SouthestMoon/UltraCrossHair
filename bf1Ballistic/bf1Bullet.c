@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include "./stb_image_write.h"
 #include "./stb_truetype.h"
 #include "./log.h"
@@ -158,7 +159,7 @@ double stimulation(bulletState* bullet) {
 void outputImg(const scale * data) {
 
   char* img = nullptr;
-  unsigned short scalesNumber=0;//当前绘制到第几根标尺
+  const int scalesNumber = (endAt - startFrom) / gap + 1;
   //分配二位数组内存
   pixel **pixels = malloc(sizeof(pixel*) * imgWidth);
   for (short i = 0; i < imgWidth; i++) {
@@ -167,72 +168,169 @@ void outputImg(const scale * data) {
       pixels[i]?logWrite("像素内存分配成功", 'I'):logWrite("内存分配失败", 'E');
   }
   
-//嵌套循环遍历二维数组，期间绘图
-for (short picY = 0; picY < imgHeight; picY++) 
-{
-    for (short picX = 0; picX < imgWidth; picX++) 
-    {
-      pixels[picX][picY].R = customColor_r;
-      pixels[picX][picY].G = customColor_g;
-      pixels[picX][picY].B = customColor_b;
-      pixels[picX][picY].A = 0;
-      //画竖线
-      if (picX==imgWidth/2&&picY>imgHeight/2) 
-        pixels[picX][picY].A = customColor_a;
-      //画标尺
-      
-      if (data[scalesNumber].distance%50==0) //绘制50m倍数的标尺
-      {
-       
-        if (data[scalesNumber].distance%100==0) //绘制100m倍数的标尺
-        {
-          if (picX>imgWidth/2&&picX<=imgWidth/2+customScaleLength_meets100&&picY>=imgHeight/2+data[scalesNumber].drop&&picY<imgHeight/2+data[scalesNumber].drop+customScaleHeight_meets100) 
-          {
-            pixels[picX][picY].A = customColor_a;
-          //printf("current Y : %d, scale: %d, drop should be:%d\n",picY, data[scalesNumber].distance,data[scalesNumber].drop);
-            if(picX==imgWidth/2+customScaleLength_meets100&&picY==imgHeight/2+data[scalesNumber].drop+customScaleHeight_meets100-1)//整条标尺绘制完后再前往下一个
-              scalesNumber++;
-          }
-        }
-        else//绘制50m倍数处标尺
-        {
-          if (picX>imgWidth/2&&picX<=imgWidth/2+customScaleLength_meets50&&picY>=imgHeight/2+data[scalesNumber].drop&&picY<imgHeight/2+data[scalesNumber].drop+customScaleHeight_meets50) 
-          {
-            pixels[picX][picY].A = customColor_a;
-            //printf("current Y : %d, scale: %d, drop should be:%d\n",picY, data[scalesNumber].distance,data[scalesNumber].drop);
-            if(picX==imgWidth/2+customScaleLength_meets50&&picY==imgHeight/2+data[scalesNumber].drop+customScaleHeight_meets50-1)
-              scalesNumber++;
-          }
-        }
-      }
-      else//绘制25m倍数处标尺 
-      {
-        
-        if (picX>imgWidth/2&&picX<=imgWidth/2+customScaleLength_normal&&picY>=imgHeight/2+data[scalesNumber].drop&&picY<imgHeight/2+data[scalesNumber].drop+customScaleHeight_normal) 
-          {
-            pixels[picX][picY].A = customColor_a;
-            //printf("current Y : %d, scale: %d, drop should be:%d\n",picY, data[scalesNumber].distance,data[scalesNumber].drop);
-            if(picX==imgWidth/2+customScaleLength_normal&&picY==imgHeight/2+data[scalesNumber].drop+customScaleHeight_normal-1)//整条标尺绘制完后再前往下一个
-              scalesNumber++;
+  // 初始化透明背景，stb_DrawLine 绘制
+  for (int picY = 0; picY < imgHeight; picY++) {
+    for (int picX = 0; picX < imgWidth; picX++) {
+      pixels[picX][picY] = (pixel){customColor_r, customColor_g, customColor_b, 0};
+    }
+  }
 
-          }
+  const pixel color = {customColor_r, customColor_g, customColor_b, customColor_a};
+  const int centerX = imgWidth / 2;
+  const int centerY = imgHeight / 2;
+  // 字体缓冲区必须保留到所有文字绘制完成；文字高度为 14 像素。
+  unsigned char *fontBuffer = nullptr;
+  stbtt_fontinfo font;
+  bool fontReady = false;
+  const float fontHeight = 14.0f;
+  FILE *fontFile = fopen("./assets/om_thin_plain.ttf", "rb");
+  if (fontFile) {
+    if (fseek(fontFile, 0, SEEK_END) == 0) {
+      long fontSize = ftell(fontFile);
+      if (fontSize > 0 && fseek(fontFile, 0, SEEK_SET) == 0) {
+        fontBuffer = malloc((size_t)fontSize);
+        if (fontBuffer && fread(fontBuffer, 1, (size_t)fontSize, fontFile) == (size_t)fontSize) {
+          int offset = stbtt_GetFontOffsetForIndex(fontBuffer, 0);
+          fontReady = offset >= 0 && stbtt_InitFont(&font, fontBuffer, offset);
+        }
       }
     }
-}
-  
+    fclose(fontFile);
+  }
+  if (!fontReady) logWrite("字体加载失败，跳过百米文字", 'E');
+  if (centerY + 1 < imgHeight) {
+    stb_DrawLine(pixels, centerX, centerY + 1, centerX, imgHeight - 1, color);
+  }
+
+  for (int i = 0; i < scalesNumber; i++) {
+    int length = customScaleLength_normal;
+    int height = customScaleHeight_normal;
+    if (data[i].distance % 100 == 0) {
+      length = customScaleLength_meets100;
+      height = customScaleHeight_meets100;
+    } else if (data[i].distance % 50 == 0) {
+      length = customScaleLength_meets50;
+      height = customScaleHeight_meets50;
+    }
+    if (length <= 0) continue;
+    for (int row = 0; row < height; row++) {
+      const int scaleY = centerY + data[i].drop + row;
+      stb_DrawLine(pixels, centerX + 1, scaleY, centerX + length, scaleY, color);
+    }
+    if (fontReady && height > 0 && data[i].distance % 100 == 0) {
+      char label[6];
+      snprintf(label, sizeof(label), "%u", (unsigned int)data[i].distance);
+      const float fontScale = stbtt_ScaleForPixelHeight(&font, fontHeight);
+      int top = 0, bottom = 0, firstLeft = 0;
+      // 使用实际字形包围盒，使文字垂直居中并精确控制左侧间隔。
+      for (int digit = 0; label[digit]; digit++) {
+        int x0, y0, x1, y1;
+        stbtt_GetCodepointBitmapBox(&font, label[digit], fontScale, fontScale, &x0, &y0, &x1, &y1);
+        if (digit == 0) { firstLeft = x0; top = y0; bottom = y1; }
+        else { if (y0 < top) top = y0; if (y1 > bottom) bottom = y1; }
+      }
+      // 标尺末端之后留出三个空白像素，第一个文字像素位于 +4。
+      float penX = (float)(centerX + length + 4 - firstLeft);
+      const int baseline = centerY + data[i].drop + (height - (bottom - top)) / 2 - top;
+      for (int digit = 0; label[digit]; digit++) {
+        int width, bitmapHeight, xOffset, yOffset;
+        unsigned char *bitmap = stbtt_GetCodepointBitmap(&font, fontScale, fontScale,
+            label[digit], &width, &bitmapHeight, &xOffset, &yOffset);
+        if (bitmap) {
+          for (int by = 0; by < bitmapHeight; by++) {
+            for (int bx = 0; bx < width; bx++) {
+              int px = (int)roundf(penX) + xOffset + bx;
+              int py = baseline + yOffset + by;
+              if (px < 0 || px >= imgWidth || py < 0 || py >= imgHeight) continue;
+              unsigned int alpha = bitmap[by * width + bx] * (unsigned char)color.A / 255;
+              if (alpha == 0) continue;
+              pixel *dst = &pixels[px][py];
+              unsigned int oldAlpha = (unsigned char)dst->A;
+              *dst = color;
+              dst->A = (char)(alpha + (oldAlpha * (255 - alpha) + 127) / 255);
+            }
+          }
+          stbtt_FreeBitmap(bitmap, nullptr);
+        }
+        int advance, bearing;
+        stbtt_GetCodepointHMetrics(&font, label[digit], &advance, &bearing);
+        penX += advance * fontScale;
+        if (label[digit + 1])
+          penX += stbtt_GetCodepointKernAdvance(&font, label[digit], label[digit + 1]) * fontScale;
+      }
+    }
+  }
+
+  free(fontBuffer);
   img=pixelsToArray( pixels);
-  stbi_write_png("./OUTPUT.png", 1080, 1080, 4, img, 1080*4);
+  stbi_write_png("./OUTPUT.png", imgWidth, imgHeight, 4, img, imgWidth * 4);
   //free子函数传回来的用完的一维数组
   free(img);
-  //printf("%d\n",scalesNumber);
 }
 
  bool fillData(scale * dataToDraw, const bulletState* bullet, unsigned short* targetX);
 
 void returnToDefault(void); 
-/*__declspec(dllexport) */int main(void) {
+// gun 的编号固定对应名称，不依赖 JSON 对象成员的排列顺序。
+static bool loadGunData(unsigned short gun, double *velocity, double *resistance) {
+  static const char *const names[] = {
+    "\"g98\"", "\"springField\"", "\"Mosin\"", "\"38\"", "\"Ross\"",
+    "\"Lebel\"", "\"Carcano\"", "\"G95\"", "\"1895\"", "\"Martini\"", "\"Vitali\""
+  };
+  if (gun > 10) return false;
+  FILE *file = fopen("./gunData.json", "rb");
+  if (!file) return false;
+  char *json = nullptr;
+  bool valid = false;
+  if (fseek(file, 0, SEEK_END) == 0) {
+    long size = ftell(file);
+    if (size > 0 && fseek(file, 0, SEEK_SET) == 0) {
+      json = malloc((size_t)size + 1);
+      if (json && fread(json, 1, (size_t)size, file) == (size_t)size) {
+        json[size] = '\0';
+        // 读取当前 gunData.json 的扁平枪械对象（数值字段 v、drag）。
+        char *entry = strstr(json, names[gun]);
+        char *begin = entry ? strchr(entry, '{') : nullptr;
+        char *end = begin ? strchr(begin, '}') : nullptr;
+        if (end) {
+          *end = '\0';
+          char *vKey = strstr(begin, "\"v\"");
+          char *dragKey = strstr(begin, "\"drag\"");
+          valid = vKey && dragKey
+              && sscanf(vKey, "\"v\" : %lf", velocity) == 1
+              && sscanf(dragKey, "\"drag\" : %lf", resistance) == 1
+              && isfinite(*velocity) && *velocity > 0
+              && isfinite(*resistance) && *resistance >= 0;
+        }
+      }
+    }
+  }
+  free(json);
+  fclose(file);
+  return valid;
+}
+
+// C# P/Invoke: ushort, ushort, ushort, double, ushort; CallingConvention.Cdecl。
+// 返回值：0 完成；1 参数错误；2 枪械数据读取失败；3 数据分配失败。
+// 使用全局绘图状态，调用方应串行调用；资源和输出路径相对当前工作目录。
+__declspec(dllexport) int __cdecl main(unsigned short inputScreenHeight,
+    unsigned short inputFov, unsigned short inputZeroInDistance,
+    double inputEnlargement, unsigned short gun) {
+  if (inputScreenHeight == 0 || inputFov == 0 || inputFov >= 180
+      || !isfinite(inputEnlargement) || inputEnlargement <= 0 || gun > 10
+      || gap <= 0 || endAt < startFrom) return 1;
+  double gunVelocity, gunDrag;
+  if (!loadGunData(gun, &gunVelocity, &gunDrag)) return 2;
+  screenHeight = inputScreenHeight;
+  fov = inputFov;
+  zeroInDistance = inputZeroInDistance;
+  enlargement = inputEnlargement;
+  vx = gunVelocity;
+  drag = gunDrag;
+  mTime = 0;
   logWrite("已启动", 'I');
   scale *dataToDraw = malloc(sizeof(scale)*((endAt-startFrom)/gap+1));   //传给绘制函数的要绘制的弹道数据, 由起始距离和间距决定数据点个数，动态分配内存 
+  if (!dataToDraw) return 3;
   bulletState bullet={x,y,vx,vy,drag,0};
   
   
@@ -256,7 +354,7 @@ void returnToDefault(void);
   outputImg(dataToDraw);
 
   free(dataToDraw);
-  
+  return 0;
 }
 
 
@@ -298,6 +396,11 @@ void returnToDefault(void) {
   static double lastDrop=0;
   static double dropNow=0.1; //上一次弹道下坠距离，本次弹道下坠距离
   static bulletState  temp[3]={0};//一个小队列，存储最近三次子弹状态
+  if (mTime == 0) {
+    lastDrop = 0;
+    dropNow = 0.1;
+    memset(temp, 0, sizeof(temp));
+  }
   temp[0] = temp[1];
   temp[1] = temp[2];
   temp[2] = *bullet;
@@ -367,16 +470,22 @@ void logWrite(const char *message, const char logLevel) {
 }
 
 bool stb_DrawLine(pixel **img, int x0, int y0, int x1, int y1, pixel color) {
+  if (!img || imgWidth <= 0 || imgHeight <= 0) return false;
+  bool drawn = false;
   int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
   int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1; 
   int err = dx + dy, e2; /* error value e_xy */
   while (true) {
-    img[x0][y0] = color;
+    if (x0 >= 0 && x0 < imgWidth && y0 >= 0 && y0 < imgHeight) {
+      img[x0][y0] = color;
+      drawn = true;
+    }
     if (x0 == x1 && y0 == y1) break;
     e2 = 2 * err;
     if (e2 >= dy) { err += dy; x0 += sx; } /* e_xy+e_x > 0 */
     if (e2 <= dx) { err += dx; y0 += sy; } /* e_xy+e_y < 0 */
   }
+  return drawn;
 }
 void reset(bulletState* bullet) {
   bullet->x = x;

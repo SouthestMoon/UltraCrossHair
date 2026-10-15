@@ -48,5 +48,47 @@
             </StackPanel>
             
         </StackPanel>
+        <Button x:Name="settingsButton" Click="settingsButton_Click" Background="White" HorizontalAlignment="Right" VerticalAlignment="Top" Width="36" Height="36">
+            <Image Source="/Assets/settings.png" Stretch="Uniform"> </Image>
+        </Button>
+        <Grid x:Name="settingsPanel" Background="White" Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Margin="8">
+                <Button Content="&lt;" Click="SettingsBack_Click" HorizontalAlignment="Left" Width="40" Height="36" AutomationProperties.Name="返回上级" Background="White"/>
+                <TextBlock Text="设置" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="20,8,20,20" MaxWidth="420" HorizontalAlignment="Center" Spacing="12">
+                    <TextBlock Text="FOV（0–180，整数）" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="48" />
+                        </Grid.ColumnDefinitions>
+                        <Slider x:Name="fovSlider" Minimum="0" Maximum="180" Value="90" StepFrequency="1" TickFrequency="1" SnapsTo="StepValues" AutomationProperties.Name="FOV" />
+                        <TextBlock Grid.Column="1" Text="{Binding Value, ElementName=fovSlider}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                    </Grid>
+                    <ComboBox x:Name="resolutionSelector" Header="屏幕分辨率" SelectedIndex="2" HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="3840×2160" />
+                        <ComboBoxItem Content="2560×1440" />
+                        <ComboBoxItem Content="1920×1080" />
+                    </ComboBox>
+                    <ComboBox x:Name="magnificationSelector" Header="准镜倍率" SelectedIndex="0" HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="8" />
+                        <ComboBoxItem Content="10" />
+                    </ComboBox>
+                    <ComboBox x:Name="zeroingSelector" Header="归零距离" SelectedIndex="0" HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="75" />
+                        <ComboBoxItem Content="150" />
+                        <ComboBoxItem Content="300" />
+                    </ComboBox>
+                    <Button x:Name="resetProgramButton" Content="重置程序" Margin="0,12,0,0" HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>
